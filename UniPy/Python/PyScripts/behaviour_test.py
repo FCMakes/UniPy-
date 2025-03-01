@@ -11,6 +11,9 @@ class Test():
     def Start(self):
         UnityEngine.Debug.Log("[Behaviour Test] Start")
 
+    def Update(self):
+        UnityEngine.Debug.Log("[Behaviour Test] Update")
+
 class Test1():
     
     def Awake(self):

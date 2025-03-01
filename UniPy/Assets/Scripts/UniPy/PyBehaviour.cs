@@ -18,6 +18,7 @@ namespace Disc0ver.Engine
         private Action _pyAwake;
         private Action _pyStart;
         private Action _pyOnDestroy;
+        private Action _pyUpdate;
 
         private void Awake()
         {
@@ -30,7 +31,9 @@ namespace Disc0ver.Engine
             
                 Env.SetAttr("Controller", this.ToPython());
 
-                if (Env.GetAttr("Start") != PyObject.None)
+                
+
+                if (Env.HasAttr("Start"))
                 {
                     Debug.Log("behaviour start");
                     _pyStart += () =>
@@ -39,7 +42,7 @@ namespace Disc0ver.Engine
                     };
                 }
 
-                if (Env.GetAttr("OnDestroy") != PyObject.None)
+                if (Env.HasAttr("OnDestroy"))
                 {
                     Debug.Log("behaviour destroy");
                     _pyOnDestroy += () =>
@@ -48,10 +51,20 @@ namespace Disc0ver.Engine
                     };
                 }
             
-                if (Env.GetAttr("Awake") != PyObject.None)
+                if (Env.HasAttr("Awake"))
                 {
                     Env.InvokeMethod("Awake");
                 }
+
+                if (Env.HasAttr("Update"))
+                {
+                    Debug.Log("behaviour update");
+                    _pyUpdate += () =>
+                    {
+                        Env.InvokeMethod("Update");
+                    };
+                }
+
             }
         }
 
@@ -60,6 +73,14 @@ namespace Disc0ver.Engine
             using (Py.GIL())
             {
                 _pyStart.Invoke();
+            }
+        }
+
+        private void Update()
+        {
+            using (Py.GIL())
+            {
+                _pyUpdate.Invoke();
             }
         }
 
