@@ -1,5 +1,6 @@
 using Python.Runtime;
 using UnityEditor;
+using UnityEngine;
 
 namespace Disc0ver.PythonPlugin
 {

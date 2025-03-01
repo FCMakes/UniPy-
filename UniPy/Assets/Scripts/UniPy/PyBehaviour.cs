@@ -1,6 +1,7 @@
 
 
 using System;
+using System.Collections.Generic;
 using Disc0ver.PythonPlugin;
 using Python.Runtime;
 using UnityEngine;
@@ -9,6 +10,15 @@ namespace Disc0ver.Engine
 {
     public class PyBehaviour: MonoBehaviour
     {
+        [System.Serializable]
+        public class ObjectReference
+        {
+            public string fieldName;
+            public UnityEngine.Object referenced;
+        }
+
+
+
         public string scriptPath = "";
         public string className = "";
         private PyObject _pyObject;
@@ -20,8 +30,61 @@ namespace Disc0ver.Engine
         private Action _pyOnDestroy;
         private Action _pyUpdate;
 
+        public ObjectReference[] References;
+        public Dictionary<string, UnityEngine.Object> ReferenceDict;
+        public Dictionary<string, object> Variables;
+
+        public PyObject Invoke(string functionname)
+        {
+
+            using (Py.GIL())
+            {
+                var module = PythonModule.Import(scriptPath);
+                var pyClass = module.GetAttr(className);
+                _pyObject = pyClass.Invoke();
+                if (Env.GetAttr(functionname) != PyObject.None)
+                {
+
+                    return Env.InvokeMethod(functionname);
+                }
+
+            }
+            return null;
+        }
+
+        public PyObject InvokeArgs(string functionname, params PyObject[] args)
+        {
+            using (Py.GIL())
+            {
+                var module = PythonModule.Import(scriptPath);
+                var pyClass = module.GetAttr(className);
+                _pyObject = pyClass.Invoke();
+             
+
+                if (Env.GetAttr(functionname) != PyObject.None)
+                {
+
+                    return Env.InvokeMethod(functionname, args);
+                }
+
+            }
+            return null;
+        }
+
         private void Awake()
         {
+            Variables = new Dictionary<string, object>();
+            ReferenceDict = new Dictionary<string, UnityEngine.Object>();
+
+            if (References != null)
+            {
+
+                foreach (ObjectReference or in References)
+                {
+                    ReferenceDict[or.fieldName] = or.referenced;
+                }
+            }
+
             PythonModule.RunString("import main\nmain.main()");
             using (Py.GIL())
             {
@@ -32,6 +95,11 @@ namespace Disc0ver.Engine
                 Env.SetAttr("Controller", this.ToPython());
 
                 
+                if (Env.HasAttr("PassMBReference"))
+                {
+                    Env.InvokeMethod("PassMBReference", PyObject.FromManagedObject(this));
+                }
+
 
                 if (Env.HasAttr("Start"))
                 {
