@@ -13,18 +13,18 @@ def main():
         gg.Log.Info("Enable Debug")
         Utils.EnableDebug()
 
-    import UIModule.UIModule as UIModule
-    gg.UI = UIModule.UIModule()
-    gg.UI.Initialization()
+    #import UIModule.UIModule as UIModule
+    #gg.UI = UIModule.UIModule()
+   # gg.UI.Initialization()
 
-    import Utils.Event.EngineEvent as EngineEventModule
-    gg.EngineEvent = EngineEventModule.Event()
+    #import Utils.Event.EngineEvent as EngineEventModule
+    #gg.EngineEvent = EngineEventModule.Event()
 
-    import Utils.Event.Event as EventModule
-    gg.Event = EventModule.Event()
+    #import Utils.Event.Event as EventModule
+   # gg.Event = EventModule.Event()
     
     # import CombatView.CombatMgr as CombatMgr
     # gg.Combat = CombatMgr.CombatMgr()
 
-    import test
+   # import test
 

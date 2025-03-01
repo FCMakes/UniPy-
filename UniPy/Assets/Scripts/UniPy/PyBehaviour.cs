@@ -21,6 +21,7 @@ namespace Disc0ver.Engine
 
         private void Awake()
         {
+            PythonModule.RunString("import main\nmain.main()");
             using (Py.GIL())
             {
                 var module = PythonModule.Import(scriptPath);
